@@ -1,0 +1,42 @@
+[env]
+ROOT_DIR = "${CARGO_MAKE_WORKING_DIRECTORY}"
+TEST_RUNNER = "${ROOT_DIR}/git-tester/dist/main.out"
+TEST_CASES_FILE = "${ROOT_DIR}/test-cases.json"
+TEST_DIR = "${ROOT_DIR}/tmp"
+
+# Ensure the tester submodule is initialized
+[tasks.ensure-submodules]
+command = "git"
+args = ["submodule", "update", "--init", "--recursive", "--depth=1"]
+
+# Ensure the tester binary is compiled
+[tasks.ensure-tester]
+dependencies = ["ensure-submodules"]
+condition = { files_not_exist = ["${TEST_RUNNER}"] }
+command = "make"
+args = ["build"]
+cwd = "./git-tester"
+
+# Ensure the testing directory exists
+[tasks.ensure-test-dir]
+command = "mkdir"
+args = ["-p", "${TEST_DIR}"]
+
+# Copy the project into the test directory
+[tasks.copy-files]
+dependencies = ["ensure-test-dir"]
+script = """
+rm -rf "${TEST_DIR}/src"
+cp -r Cargo.toml Cargo.lock codecrafters.yml your_git.sh src "${TEST_DIR}"
+"""
+
+# Run the tests, see `test.sh` for arguments
+[tasks.test]
+dependencies = ["ensure-tester", "copy-files"]
+command = "${ROOT_DIR}/test.sh"
+args = ["${@}"]
+
+# Clean the test directory
+[tasks.clean]
+command = "rm"
+args = ["-rf", "${TEST_DIR}"]
