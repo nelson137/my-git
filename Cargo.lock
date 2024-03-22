@@ -331,21 +331,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-starter-rust"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bytes",
- "clap",
- "flate2",
- "hex",
- "reqwest",
- "sha1",
- "thiserror",
- "tokio",
-]
-
-[[package]]
 name = "h2"
 version = "0.3.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -581,6 +566,21 @@ dependencies = [
  "log",
  "wasi",
  "windows-sys 0.42.0",
+]
+
+[[package]]
+name = "my-git"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "clap",
+ "flate2",
+ "hex",
+ "reqwest",
+ "sha1",
+ "thiserror",
+ "tokio",
 ]
 
 [[package]]
