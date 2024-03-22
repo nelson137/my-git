@@ -3,6 +3,8 @@ ROOT_DIR = "${CARGO_MAKE_WORKING_DIRECTORY}"
 TEST_RUNNER = "${ROOT_DIR}/git-tester/dist/main.out"
 TEST_CASES_FILE = "${ROOT_DIR}/test-cases.json"
 TEST_DIR = "${ROOT_DIR}/tmp"
+TARGET_DIR = "${ROOT_DIR}/target"
+DOCKER_IMG = "my-git"
 
 # Ensure the tester submodule is initialized
 [tasks.ensure-submodules]
@@ -35,6 +37,22 @@ cp -r Cargo.toml Cargo.lock codecrafters.yml your_git.sh src "${TEST_DIR}"
 dependencies = ["ensure-tester", "copy-files"]
 command = "${ROOT_DIR}/test.sh"
 args = ["${@}"]
+
+[tasks.docker-image]
+command = "docker"
+args = ["build", "--tag=${DOCKER_IMG}", "."]
+
+[tasks.docker-run]
+command = "docker"
+args = ["run", "--rm", "--volume=${ROOT_DIR}:/tmp/app", "--volume=${ROOT_DIR}/.cargo-registry:/usr/local/cargo/registry", "--env=APP_DIR=/tmp/app", "-it", "--entrypoint=/bin/bash", "${DOCKER_IMG}", "${@}"]
+
+[tasks.docker-test]
+command = "docker"
+args = ["run", "--rm", "--volume=${ROOT_DIR}:/tmp/app", "--volume=${ROOT_DIR}/.cargo-registry:/usr/local/cargo/registry", "--env=APP_DIR=/tmp/app", "${DOCKER_IMG}", "${@}"]
+
+[tasks.clean-docker-image]
+command = "docker"
+args = ["image", "rm", "--force", "${DOCKER_IMG}"]
 
 # Clean the test directory
 [tasks.clean]

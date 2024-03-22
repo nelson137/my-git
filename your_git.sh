@@ -6,5 +6,5 @@ exec cargo run \
     --quiet \
     --release \
     --manifest-path="$HERE/Cargo.toml" \
-    --target-dir="$HERE/../target" \
+    --target-dir="$TARGET_DIR" \
     -- "$@"
